@@ -1,40 +1,114 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { UpnData } from './types';
 import { parseUpnString, convertUpnToEpc } from './services/conversionService';
 import Scanner from './components/Scanner';
 import ResultDisplay from './components/ResultDisplay';
-import { CameraIcon, QrCodeIcon } from './components/Icons';
+import { CameraIcon, QrCodeIcon, UploadCloudIcon, GlobeIcon, InfoIcon, FileTextIcon } from './components/Icons';
+import InfoModal from './components/InfoModal';
+import ImageCropModal from './components/ImageCropModal'; // New import
+import Blog from './components/Blog';
+import { Html5Qrcode } from 'html5-qrcode';
+import { translations } from './translations';
+import { QRCodeSVG } from 'qrcode.react';
+import { trackEvent } from './services/analyticsService';
 
-type AppStatus = 'idle' | 'scanning' | 'success' | 'error';
+type AppStatus = 'idle' | 'scanning' | 'success' | 'error' | 'shared';
+type Language = 'en' | 'sl';
+type View = 'main' | 'blog';
+
+const fileScannerElementId = 'file-scanner-container';
 
 const App: React.FC = () => {
   const [status, setStatus] = useState<AppStatus>('idle');
   const [upnData, setUpnData] = useState<UpnData | null>(null);
   const [epcString, setEpcString] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [lang, setLang] = useState<Language>('en');
+  const [isInfoModalOpen, setInfoModalOpen] = useState(false);
+  const [view, setView] = useState<View>('main');
+  const [isCropping, setIsCropping] = useState(false); // New state
+  const [imageSrcForCrop, setImageSrcForCrop] = useState<string | null>(null); // New state
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileScannerRef = useRef<Html5Qrcode | null>(null);
 
-  const handleScanSuccess = (decodedText: string) => {
+  const t = (key: keyof typeof translations, ...args: any[]) => {
+    const value = translations[key][lang];
+    if (typeof value === 'function') {
+      return (value as Function)(...args);
+    }
+    return value;
+  };
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const data = urlParams.get('data');
+
+    if (data) {
+        try {
+            const decodedData = atob(data);
+            if (decodedData.startsWith('BCD\n')) {
+                setEpcString(decodedData);
+                setStatus('shared');
+                trackEvent('shared_link_opened', 'Sharing', 'success');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else {
+                setError(t('errorInvalidSharedLink'));
+                trackEvent('shared_link_opened', 'Sharing', 'invalid_data');
+                setStatus('error');
+            }
+        } catch (e) {
+            setError(t('errorInvalidSharedLink'));
+            trackEvent('shared_link_opened', 'Sharing', 'decoding_error');
+            setStatus('error');
+        }
+    }
+  }, []);
+
+  const handleScanSuccess = (decodedText: string | null | undefined, source: 'camera' | 'upload') => {
+    const originalScan = decodedText || '';
+    if (!decodedText || decodedText.trim() === '') {
+      const tips = t('scanTips').split('\n');
+      const message = `${t('errorEmptyScan')}\n\n${t('scanTipsTitle')}\n- ${tips.join('\n- ')}`;
+      const finalMessage = `${message}\n\n--- ${t('rawContentTitle')} ---\n'${originalScan}'`;
+      setError(finalMessage);
+      trackEvent('conversion_error', 'Conversion', `${source}: empty_scan`);
+      setStatus('error');
+      return;
+    }
+
+    const cleanText = decodedText.startsWith('\uFEFF') ? decodedText.slice(1) : decodedText;
+
     try {
-      const trimmedText = decodedText.trim();
-      if (!trimmedText.startsWith('UPNQR')) {
-        throw new Error('This does not appear to be a valid UPN QR code.');
-      }
-      const parsedUpn = parseUpnString(trimmedText);
+      const parsedUpn = parseUpnString(cleanText);
       const convertedEpc = convertUpnToEpc(parsedUpn);
       setUpnData(parsedUpn);
       setEpcString(convertedEpc);
       setStatus('success');
+      trackEvent('conversion_success', 'Conversion', source);
       setError('');
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'An unknown error occurred during parsing.';
-      setError(message);
+      let message = t('errorUnknown');
+      let errorKey = 'unknown_error';
+      if (err instanceof Error) {
+        errorKey = err.message;
+        const translationKey = errorKey as keyof typeof translations;
+        if (translations[translationKey]) {
+          const details = (err as any).details || [];
+          message = t(translationKey, ...details);
+        } else {
+          message = err.message;
+        }
+      }
+      const finalMessage = `${message}\n\n--- ${t('rawContentTitle')} ---\n'${cleanText}'`;
+      setError(finalMessage);
+      trackEvent('conversion_error', 'Conversion', `${source}: ${errorKey}`);
       setStatus('error');
     }
   };
   
   const handleScanError = (errorMessage: string) => {
-    setError(`Camera error: ${errorMessage}`);
+    setError(`${t('errorCamera')} ${errorMessage}`);
+    trackEvent('conversion_error', 'Conversion', `camera_start_fail: ${errorMessage}`);
     setStatus('error');
   };
 
@@ -45,22 +119,96 @@ const App: React.FC = () => {
     setError('');
   };
 
-  const renderContent = () => {
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+        setImageSrcForCrop(reader.result as string);
+        setIsCropping(true);
+    });
+    reader.readAsDataURL(file);
+
+    if(event.target) event.target.value = ''; // Reset file input
+  };
+  
+  const handleCropCancel = () => {
+      setIsCropping(false);
+      setImageSrcForCrop(null);
+  };
+
+  const handleCropConfirm = async (croppedImageBlob: Blob) => {
+    setIsCropping(false);
+    setImageSrcForCrop(null);
+    
+    if (!fileScannerRef.current) {
+      fileScannerRef.current = new Html5Qrcode(fileScannerElementId, false);
+    }
+    
+    const imageFile = new File([croppedImageBlob], "cropped-qr.png", { type: "image/png" });
+
+    try {
+      const decodedText = await fileScannerRef.current.scanFile(imageFile, false);
+      handleScanSuccess(decodedText, 'upload');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : t('errorDecode');
+      setError(`${t('errorFileUpload')} ${message}`);
+      trackEvent('conversion_error', 'Conversion', `file_upload_fail_cropped: ${message}`);
+      setStatus('error');
+    }
+  };
+
+  const handleLanguageChange = () => {
+    const newLang = lang === 'en' ? 'sl' : 'en';
+    setLang(newLang);
+    trackEvent('language_switch', 'Engagement', newLang);
+  };
+  
+  const handleViewBlog = () => {
+    setView('blog');
+    trackEvent('view_blog', 'Engagement', 'header_click');
+  }
+
+  const renderMainContent = () => {
     switch (status) {
       case 'scanning':
-        return <Scanner onSuccess={handleScanSuccess} onError={handleScanError} onCancel={() => setStatus('idle')} />;
+        return <Scanner onSuccess={(text) => handleScanSuccess(text, 'camera')} onError={handleScanError} onCancel={() => setStatus('idle')} t={t} />;
       case 'success':
-        return upnData && <ResultDisplay upnData={upnData} epcPayload={epcString} onReset={handleReset} />;
+        return upnData && <ResultDisplay upnData={upnData} epcPayload={epcString} onReset={handleReset} t={t} />;
+      case 'shared':
+        return (
+            <div className="bg-brand-light-dark p-6 rounded-lg shadow-xl w-full max-w-md mx-auto flex flex-col items-center">
+                <h2 className="text-2xl font-bold text-white mb-2">{t('sharedTitle')}</h2>
+                <p className="text-brand-gray mb-6 text-center">{t('sharedDescription')}</p>
+                <div className="bg-white p-4 rounded-lg mb-6">
+                    <QRCodeSVG value={epcString} size={256} level="M" includeMargin={true} />
+                </div>
+                <a
+                    href={window.location.origin + window.location.pathname}
+                    className="w-full bg-brand-blue text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                >
+                    <QrCodeIcon className="w-5 h-5" />
+                    {t('createYourOwn')}
+                </a>
+            </div>
+        );
       case 'error':
         return (
           <div className="text-center text-red-400 bg-red-900/50 p-6 rounded-lg">
-            <h2 className="text-xl font-bold mb-2">Scan Failed</h2>
-            <p className="mb-4">{error}</p>
+            <h2 className="text-xl font-bold mb-2">{t('errorTitle')}</h2>
+            <p className="mb-4 whitespace-pre-wrap text-left bg-brand-dark/50 p-3 rounded-md font-mono text-sm">
+              {error}
+            </p>
             <button
               onClick={handleReset}
               className="bg-brand-blue text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 transition-colors"
             >
-              Try Again
+              {t('errorTryAgain')}
             </button>
           </div>
         );
@@ -71,30 +219,89 @@ const App: React.FC = () => {
             <div className="mx-auto mb-6 bg-brand-light-dark p-4 rounded-full w-24 h-24 flex items-center justify-center">
               <QrCodeIcon className="w-12 h-12 text-brand-blue" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">UPN to EPC QR Converter</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">{t('title')}</h1>
             <p className="text-brand-gray max-w-md mx-auto mb-8">
-              Scan a Slovenian UPN bill's QR code to convert it into a standard EPC QR code, perfect for payment apps like Revolut.
+              {t('description')}
             </p>
-            <button
-              onClick={() => setStatus('scanning')}
-              className="w-full sm:w-auto bg-brand-blue text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-blue-600 transition-colors flex items-center justify-center mx-auto gap-2"
-            >
-              <CameraIcon className="w-6 h-6" />
-              Start Scanning
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+               <button
+                  onClick={() => setStatus('scanning')}
+                  className="w-full sm:w-auto bg-brand-blue text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                >
+                  <CameraIcon className="w-6 h-6" />
+                  {t('startScanning')}
+                </button>
+                <button
+                  onClick={handleUploadClick}
+                  className="w-full sm:w-auto bg-brand-light-dark text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-gray-700 transition-colors flex items-center justify-center gap-2 border border-brand-gray"
+                >
+                  <UploadCloudIcon className="w-6 h-6" />
+                  {t('uploadImage')}
+                </button>
+            </div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+              className="hidden"
+              aria-hidden="true"
+            />
           </div>
         );
     }
   };
+  
+  const renderContent = () => {
+    if (view === 'blog') {
+        return <Blog onBack={() => setView('main')} t={t} />;
+    }
+    return renderMainContent();
+  };
 
   return (
-    <div className="min-h-screen bg-brand-dark text-gray-200 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-brand-dark text-gray-200 flex flex-col items-center justify-center p-4 relative">
+      <header className="absolute top-0 right-0 p-4 flex gap-3">
+        <button 
+            onClick={handleLanguageChange}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-brand-gray hover:bg-brand-light-dark hover:text-white transition-colors"
+            title="Change language / Spremeni jezik"
+        >
+            <GlobeIcon className="w-6 h-6" />
+            <span className="font-bold text-sm">{lang.toUpperCase()}</span>
+        </button>
+        <button 
+            onClick={handleViewBlog}
+            className="p-2 rounded-full text-brand-gray hover:bg-brand-light-dark hover:text-white transition-colors"
+            title={t('blogButtonTitle')}
+        >
+            <FileTextIcon className="w-6 h-6" />
+        </button>
+        <button 
+            onClick={() => setInfoModalOpen(true)}
+            className="p-2 rounded-full text-brand-gray hover:bg-brand-light-dark hover:text-white transition-colors"
+            title="About this app / O aplikaciji"
+        >
+            <InfoIcon className="w-6 h-6" />
+        </button>
+      </header>
+
+      <div id={fileScannerElementId} style={{ display: 'none' }}></div>
       <main className="w-full max-w-2xl mx-auto">
         {renderContent()}
       </main>
+      {isCropping && imageSrcForCrop && (
+          <ImageCropModal 
+            imageSrc={imageSrcForCrop}
+            onConfirm={handleCropConfirm}
+            onCancel={handleCropCancel}
+            t={t}
+          />
+      )}
       <footer className="text-center text-brand-gray text-sm p-4 mt-auto">
-        <p>&copy; {new Date().getFullYear()} UPN to EPC Converter. Built for simplicity.</p>
+        <p>&copy; {new Date().getFullYear()} {t('footerText')}</p>
       </footer>
+      {isInfoModalOpen && <InfoModal onClose={() => setInfoModalOpen(false)} t={t} />}
     </div>
   );
 };

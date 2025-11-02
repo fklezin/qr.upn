@@ -1,17 +1,18 @@
-
 import React, { useEffect, useRef } from 'react';
 import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
 import { ArrowLeftIcon } from './Icons';
+import { translations } from '../translations';
 
 interface ScannerProps {
   onSuccess: (decodedText: string) => void;
   onError: (errorMessage: string) => void;
   onCancel: () => void;
+  t: (key: keyof typeof translations, ...args: any[]) => string;
 }
 
 const qrReaderElementId = 'qr-reader';
 
-const Scanner: React.FC<ScannerProps> = ({ onSuccess, onError, onCancel }) => {
+const Scanner: React.FC<ScannerProps> = ({ onSuccess, onError, onCancel, t }) => {
   const scannerRef = useRef<Html5Qrcode | null>(null);
 
   useEffect(() => {
@@ -72,7 +73,7 @@ const Scanner: React.FC<ScannerProps> = ({ onSuccess, onError, onCancel }) => {
       <button 
         onClick={onCancel} 
         className="absolute top-4 left-4 bg-black/50 text-white rounded-full p-2 hover:bg-black/75 transition-colors"
-        aria-label="Cancel scanning"
+        aria-label={t('scannerCancel')}
       >
         <ArrowLeftIcon className="w-6 h-6" />
       </button>

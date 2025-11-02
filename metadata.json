@@ -1,6 +1,6 @@
 {
   "name": "UPN to EPC QR Converter",
-  "description": "A simple web app to scan a Slovenian UPN payment QR code using your device's camera and convert it to the European EPC standard. This allows for easy payment with modern banking apps like Revolut.",
+  "description": "Scan a Slovenian UPN payment QR and convert it to the European EPC standard. Supports English and Slovenian. / Skenirajte slovensko UPN QR kodo in jo pretvorite v evropski EPC standard. Podpira angleščino in slovenščino.",
   "requestFramePermissions": [
     "camera"
   ]

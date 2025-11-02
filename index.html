@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,6 +5,15 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UPN to EPC QR Converter</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G5EJWPL5MJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-G5EJWPL5MJ');
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -21,6 +29,7 @@
         }
       }
     </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/react-image-crop@11.0.5/dist/ReactCrop.min.css">
   <script type="importmap">
 {
   "imports": {
@@ -28,7 +37,8 @@
     "react/": "https://aistudiocdn.com/react@^19.2.0/",
     "react": "https://aistudiocdn.com/react@^19.2.0",
     "html5-qrcode": "https://aistudiocdn.com/html5-qrcode@^2.3.8",
-    "qrcode.react": "https://aistudiocdn.com/qrcode.react@^4.2.0"
+    "qrcode.react": "https://aistudiocdn.com/qrcode.react@^4.2.0",
+    "react-image-crop": "https://cdn.jsdelivr.net/npm/react-image-crop@11.0.5/+esm"
   }
 }
 </script>
