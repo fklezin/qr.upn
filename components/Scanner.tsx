@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
 import { ArrowLeftIcon } from './Icons';
 import { translations } from '../translations';
 
@@ -12,23 +11,31 @@ interface ScannerProps {
 
 const qrReaderElementId = 'qr-reader';
 
+interface Html5QrcodeInstance {
+    start: (...args: any[]) => Promise<null>;
+    stop: () => Promise<void>;
+    isScanning: boolean;
+}
+
 const Scanner: React.FC<ScannerProps> = ({ onSuccess, onError, onCancel, t }) => {
-  const scannerRef = useRef<Html5Qrcode | null>(null);
+  const scannerRef = useRef<Html5QrcodeInstance | null>(null);
 
   useEffect(() => {
-    if (!scannerRef.current) {
-        scannerRef.current = new Html5Qrcode(qrReaderElementId);
-    }
-    const html5QrCode = scannerRef.current;
-    
-    // Check if scanner is already running
-    if (html5QrCode && html5QrCode.getState() === Html5QrcodeScannerState.SCANNING) {
-      return;
-    }
+    let isMounted = true;
     
     const startScanner = async () => {
       try {
-        await html5QrCode.start(
+        const { Html5Qrcode } = await import('html5-qrcode');
+        if (!isMounted) return;
+
+        const scanner = new Html5Qrcode(qrReaderElementId) as Html5QrcodeInstance;
+        scannerRef.current = scanner;
+
+        if (scanner.isScanning) {
+            return;
+        }
+
+        await scanner.start(
           { facingMode: 'environment' },
           { 
             fps: 10, 
@@ -40,26 +47,28 @@ const Scanner: React.FC<ScannerProps> = ({ onSuccess, onError, onCancel, t }) =>
             aspectRatio: 1.0
           },
           (decodedText, _) => {
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().then(() => onSuccess(decodedText)).catch(err => console.error("Failed to stop scanner on success", err));
+            if (scannerRef.current && scannerRef.current.isScanning) {
+                scannerRef.current.stop().then(() => onSuccess(decodedText)).catch(err => console.error("Failed to stop scanner on success", err));
             }
           },
           (_) => {
-            // This is the error callback, which is called frequently. 
-            // We handle critical errors in the catch block.
+            // This is the error callback, which is called frequently for non-critical errors.
           }
         );
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Failed to start camera.';
-        onError(message);
+        if (isMounted) {
+            const message = err instanceof Error ? err.message : 'Failed to start camera.';
+            onError(message);
+        }
       }
     };
 
     startScanner();
 
     return () => {
-      if (html5QrCode && html5QrCode.isScanning) {
-        html5QrCode.stop().catch(err => console.error("Failed to stop scanner on cleanup.", err));
+      isMounted = false;
+      if (scannerRef.current && scannerRef.current.isScanning) {
+        scannerRef.current.stop().catch(err => console.error("Failed to stop scanner on cleanup.", err));
       }
     };
   }, [onSuccess, onError]);

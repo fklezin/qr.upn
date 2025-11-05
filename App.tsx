@@ -1,16 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { UpnData } from './types';
 import { parseUpnString, convertUpnToEpc } from './services/conversionService';
-import Scanner from './components/Scanner';
-import ResultDisplay from './components/ResultDisplay';
 import { CameraIcon, QrCodeIcon, UploadCloudIcon, GlobeIcon, InfoIcon, FileTextIcon } from './components/Icons';
-import InfoModal from './components/InfoModal';
-import ImageCropModal from './components/ImageCropModal'; // New import
-import Blog from './components/Blog';
-import { Html5Qrcode } from 'html5-qrcode';
 import { translations } from './translations';
-import { QRCodeSVG } from 'qrcode.react';
 import { trackEvent } from './services/analyticsService';
+
+const Scanner = React.lazy(() => import('./components/Scanner'));
+const ResultDisplay = React.lazy(() => import('./components/ResultDisplay'));
+const InfoModal = React.lazy(() => import('./components/InfoModal'));
+const ImageCropModal = React.lazy(() => import('./components/ImageCropModal'));
+const Blog = React.lazy(() => import('./components/Blog'));
+const SharedDisplay = React.lazy(() => import('./components/SharedDisplay'));
+
 
 type AppStatus = 'idle' | 'scanning' | 'success' | 'error' | 'shared';
 type Language = 'en' | 'sl';
@@ -26,10 +27,10 @@ const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('en');
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
   const [view, setView] = useState<View>('main');
-  const [isCropping, setIsCropping] = useState(false); // New state
-  const [imageSrcForCrop, setImageSrcForCrop] = useState<string | null>(null); // New state
+  const [isCropping, setIsCropping] = useState(false);
+  const [imageSrcForCrop, setImageSrcForCrop] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const fileScannerRef = useRef<Html5Qrcode | null>(null);
+  const fileScannerRef = useRef<any | null>(null);
 
   const t = (key: keyof typeof translations, ...args: any[]) => {
     const value = translations[key][lang];
@@ -147,6 +148,7 @@ const App: React.FC = () => {
     setImageSrcForCrop(null);
     
     if (!fileScannerRef.current) {
+      const { Html5Qrcode } = await import('html5-qrcode');
       fileScannerRef.current = new Html5Qrcode(fileScannerElementId, false);
     }
     
@@ -181,22 +183,7 @@ const App: React.FC = () => {
       case 'success':
         return upnData && <ResultDisplay upnData={upnData} epcPayload={epcString} onReset={handleReset} t={t} />;
       case 'shared':
-        return (
-            <div className="bg-brand-light-dark p-6 rounded-lg shadow-xl w-full max-w-md mx-auto flex flex-col items-center">
-                <h2 className="text-2xl font-bold text-white mb-2">{t('sharedTitle')}</h2>
-                <p className="text-brand-gray mb-6 text-center">{t('sharedDescription')}</p>
-                <div className="bg-white p-4 rounded-lg mb-6">
-                    <QRCodeSVG value={epcString} size={256} level="M" includeMargin={true} />
-                </div>
-                <a
-                    href={window.location.origin + window.location.pathname}
-                    className="w-full bg-brand-blue text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
-                >
-                    <QrCodeIcon className="w-5 h-5" />
-                    {t('createYourOwn')}
-                </a>
-            </div>
-        );
+        return <SharedDisplay epcString={epcString} t={t} />;
       case 'error':
         return (
           <div className="text-center text-red-400 bg-red-900/50 p-6 rounded-lg">

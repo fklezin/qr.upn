@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ReactCrop, { type Crop, centerCrop, makeAspectCrop, PixelCrop } from 'react-image-crop';
 import { translations } from '../translations';
 import { CheckIcon, XIcon } from './Icons';
@@ -52,6 +52,28 @@ const ImageCropModal: React.FC<ImageCropModalProps> = ({ imageSrc, onConfirm, on
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    const stylesheetUrl = 'https://cdn.jsdelivr.net/npm/react-image-crop@11.0.5/dist/ReactCrop.min.css';
+    const linkId = 'react-image-crop-styles';
+
+    if (document.getElementById(linkId)) {
+      return; // Already added
+    }
+
+    const link = document.createElement('link');
+    link.id = linkId;
+    link.rel = 'stylesheet';
+    link.href = stylesheetUrl;
+    document.head.appendChild(link);
+
+    return () => {
+      const linkToRemove = document.getElementById(linkId);
+      if (linkToRemove) {
+        document.head.removeChild(linkToRemove);
+      }
+    };
+  }, []);
 
   function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
     const { width, height } = e.currentTarget;
