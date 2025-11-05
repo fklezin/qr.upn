@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UPN to EPC QR Converter</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G5EJWPL5MJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-G5EJWPL5MJ');
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-blue': '#007AFF',
+              'brand-dark': '#121212',
+              'brand-light-dark': '#1E1E1E',
+              'brand-gray': '#8E8E93'
+            }
+          }
+        }
+      }
+    </script>
+    
+
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "html5-qrcode": "https://aistudiocdn.com/html5-qrcode@^2.3.8",
+    "qrcode.react": "https://cdn.jsdelivr.net/npm/qrcode.react@3.1.0/+esm",
+    "react-image-crop": "https://cdn.jsdelivr.net/npm/react-image-crop@11.0.5/+esm"
+  }
+}
+</script>
+  <script type="module" crossorigin src="/qr.upn/assets/index-n3YvM4MH.js"></script>
+</head>
+  <body class="bg-brand-dark">
+    <div id="root"></div>
+  </body>
+</html>
