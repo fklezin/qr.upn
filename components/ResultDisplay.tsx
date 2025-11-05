@@ -17,8 +17,8 @@ const DataRow: React.FC<{ label: string; value: string | undefined | boolean }> 
   const displayValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value;
   return (
     <div className="flex justify-between items-start py-2 border-b border-gray-700">
-      <dt className="text-sm text-brand-gray">{label}</dt>
-      <dd className="text-sm text-right text-white font-medium">{displayValue}</dd>
+      <span className="text-sm text-brand-gray">{label}</span>
+      <span className="text-sm text-right text-white font-medium">{displayValue}</span>
     </div>
   );
 };
@@ -143,7 +143,6 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ upnData, epcPayload, onRe
       amountValue = parseFloat(normalized);
     }
 
-    // FIX: Corrected translation key from 'errorInvalidAmount' to 'ERROR_INVALID_AMOUNT'.
     if (isNaN(amountValue)) return t('ERROR_INVALID_AMOUNT');
     return `${amountValue.toFixed(2)} EUR`;
   })();
@@ -174,13 +173,13 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ upnData, epcPayload, onRe
 
       <div className="w-full mb-6">
         <h3 className="text-lg font-semibold text-white mb-2 text-center border-b border-gray-700 pb-2">{t('originalDataTitle')}</h3>
-        <dl className="space-y-1 mt-2">
+        <div className="mt-2">
           <DataRow label={t('recipient')} value={upnData.recipientName} />
           <DataRow label={t('iban')} value={upnData.recipientIBAN} />
           <DataRow label={t('amount')} value={displayAmount} />
           <DataRow label={t('purpose')} value={upnData.purpose} />
           <DataRow label={t('reference')} value={upnData.recipientReference} />
-        </dl>
+        </div>
       </div>
 
       <div className="w-full flex flex-col gap-4">

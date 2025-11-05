@@ -33,12 +33,10 @@ const Blog: React.FC<BlogProps> = ({ onBack, t }) => {
         <article>
             <p className="text-lg text-brand-gray mb-8 italic">{t('blogIntro')}</p>
 
-            {/* FIX: Removed a paragraph from this section that used the non-existent translation key 'blogSection1P2'. */}
             <BlogSection title={t('blogSection1Title')}>
                 <p>{t('blogSection1P1')}</p>
             </BlogSection>
 
-            {/* FIX: Removed a paragraph from this section that used the non-existent translation key 'blogSection2P2'. */}
             <BlogSection title={t('blogSection2Title')}>
                 <p>{t('blogSection2P1')}</p>
             </BlogSection>
