@@ -155,13 +155,30 @@ const App: React.FC = () => {
     const imageFile = new File([croppedImageBlob], "cropped-qr.png", { type: "image/png" });
 
     try {
-      const decodedText = await fileScannerRef.current.scanFile(imageFile, false);
+      // Try scanFile, and fall back to scanFileV2 if available
+      let decodedText: string | null | undefined;
+      const scanner = fileScannerRef.current;
+      if ((scanner as any).scanFile) {
+        decodedText = await (scanner as any).scanFile(imageFile, false);
+      } else if ((scanner as any).scanFileV2) {
+        const result = await (scanner as any).scanFileV2(imageFile, false);
+        decodedText = result?.decodedText;
+      } else {
+        throw new Error('scanFile method not available');
+      }
       handleScanSuccess(decodedText, 'upload');
     } catch (err) {
       const message = err instanceof Error ? err.message : t('errorDecode');
       setError(`${t('errorFileUpload')} ${message}`);
       trackEvent('conversion_error', 'Conversion', `file_upload_fail_cropped: ${message}`);
       setStatus('error');
+    } finally {
+      // Ensure we release resources to allow subsequent uploads
+      try {
+        await fileScannerRef.current?.clear();
+      } catch (_) {
+        // ignore
+      }
     }
   };
 
