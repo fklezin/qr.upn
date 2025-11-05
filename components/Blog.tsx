@@ -47,7 +47,7 @@ const Blog: React.FC<BlogProps> = ({ onBack, t }) => {
 
             <BlogSection title={t('blogSection4Title')}>
                 <p>{t('blogSection4P1')}</p>
-                <ul className="list-disc list-inside space-y-2 pl-4 font-medium text-white">
+                <ul className="list-disc list-inside space-y-2 pl-4 font-medium text-brand-gray-dark">
                     {t('blogSection4List').split('\n').map((item, index) => (
                         <li key={index}>{item}</li>
                     ))}
