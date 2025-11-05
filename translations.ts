@@ -30,6 +30,9 @@ export const translations = {
 
   // Scanner.tsx
   scannerCancel: { en: 'Cancel scanning', sl: 'Prekliči skeniranje'},
+  flashlightToggle: { en: 'Toggle flashlight', sl: 'Preklopi svetilko'},
+  flashlightOn: { en: 'Flashlight on', sl: 'Svetilka vklopljena'},
+  flashlightOff: { en: 'Flashlight off', sl: 'Svetilka izklopljena'},
   
   // ResultDisplay.tsx
   resultTitle: { en: 'Conversion Successful!', sl: 'Pretvorba Uspešna!' },

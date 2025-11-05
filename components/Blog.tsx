@@ -9,8 +9,8 @@ interface BlogProps {
 
 const BlogSection: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
     <div className="mb-8">
-        <h2 className="text-2xl font-bold text-brand-blue mb-3">{title}</h2>
-        <div className="space-y-4 text-gray-300 leading-relaxed">
+        <h2 className="text-2xl font-bold text-brand-primary mb-3 border-b border-brand-primary/20 pb-2">{title}</h2>
+        <div className="space-y-4 text-brand-gray-dark leading-relaxed">
             {children}
         </div>
     </div>
@@ -18,16 +18,16 @@ const BlogSection: React.FC<{ title: string; children: React.ReactNode }> = ({ t
 
 const Blog: React.FC<BlogProps> = ({ onBack, t }) => {
   return (
-    <div className="bg-brand-light-dark p-6 md:p-8 rounded-lg shadow-xl w-full max-w-2xl mx-auto">
-        <header className="flex items-center mb-8">
+    <div className="bg-white border border-brand-gray-light p-4 sm:p-6 md:p-8 rounded-lg shadow-sm w-full max-w-2xl mx-auto">
+        <header className="flex items-center mb-6 sm:mb-8 border-b border-brand-gray-light pb-4">
             <button
                 onClick={onBack}
-                className="mr-4 p-2 rounded-full text-brand-gray hover:bg-brand-dark hover:text-white transition-colors"
+                className="mr-3 sm:mr-4 p-2 rounded-full text-brand-gray hover:bg-brand-light-dark hover:text-brand-primary transition-colors flex-shrink-0 border border-transparent hover:border-brand-primary"
                 aria-label={t('blogBackToApp')}
             >
-                <ArrowLeftIcon className="w-6 h-6" />
+                <ArrowLeftIcon className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
-            <h1 className="text-3xl font-bold text-white">{t('blogTitle')}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-brand-text break-words">{t('blogTitle')}</h1>
         </header>
         
         <article>
@@ -59,7 +59,7 @@ const Blog: React.FC<BlogProps> = ({ onBack, t }) => {
         <div className="text-center mt-10">
             <button
                 onClick={onBack}
-                className="w-full sm:w-auto bg-brand-blue text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                className="w-full sm:w-auto bg-brand-primary text-white font-semibold py-3 px-8 rounded-lg text-lg hover:bg-brand-primary-hover transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2"
             >
                 <ArrowLeftIcon className="w-5 h-5" />
                 {t('blogBackToApp')}

@@ -10,8 +10,10 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 
 const LoadingFallback = () => (
-  <div className="min-h-screen bg-brand-dark text-gray-200 flex flex-col items-center justify-center p-4">
-    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-brand-blue"></div>
+  <div className="min-h-screen bg-brand-light-dark text-brand-text flex flex-col items-center justify-center p-4">
+    <div className="relative animate-spin rounded-full h-16 w-16">
+      <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-brand-primary"></div>
+    </div>
     <p className="mt-4 text-brand-gray">Loading...</p>
   </div>
 );

@@ -15,6 +15,14 @@ View your app in AI Studio: https://ai.studio/apps/drive/1d7-Lij_Dt02fpi_Uh7MdQh
 
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
+2. Run the app:
    `npm run dev`
+
+## Deploy for Free (Mobile Testing)
+
+### GitHub Pages
+
+1. Install gh-pages: `npm install --save-dev gh-pages`
+2. Add to `package.json` scripts: `"deploy": "npm run build && gh-pages -d dist"`
+3. Run: `npm run deploy`
+4. Enable GitHub Pages in your repo settings

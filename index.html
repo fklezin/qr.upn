@@ -20,10 +20,15 @@
         theme: {
           extend: {
             colors: {
-              'brand-blue': '#007AFF',
-              'brand-dark': '#121212',
-              'brand-light-dark': '#1E1E1E',
-              'brand-gray': '#8E8E93'
+              'brand-primary': '#D32F2F', // Desaturated red/pink like UPN accent
+              'brand-primary-hover': '#B71C1C', // Darker red for hover
+              'brand-primary-light': '#EF5350', // Lighter red for accents
+              'brand-dark': '#FFFFFF', // White background like UPN
+              'brand-light-dark': '#F5F5F5', // Light gray background
+              'brand-gray': '#757575', // Medium gray for text
+              'brand-gray-dark': '#424242', // Dark gray for labels
+              'brand-gray-light': '#E0E0E0', // Light gray for borders
+              'brand-text': '#212121' // Black text like UPN
             }
           }
         }
@@ -43,7 +48,7 @@
 }
 </script>
 </head>
-  <body class="bg-brand-dark">
+  <body class="bg-brand-light-dark">
     <div id="root"></div>
     <script type="module" src="./index.tsx"></script>
   </body>

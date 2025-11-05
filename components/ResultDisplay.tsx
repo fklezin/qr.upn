@@ -16,9 +16,9 @@ const DataRow: React.FC<{ label: string; value: string | undefined | boolean }> 
   if (value === undefined || value === null || value === '') return null;
   const displayValue = typeof value === 'boolean' ? (value ? 'Yes' : 'No') : value;
   return (
-    <div className="flex justify-between items-start py-2 border-b border-gray-700">
+    <div className="flex justify-between items-start py-2 border-b border-brand-gray-light">
       <span className="text-sm text-brand-gray">{label}</span>
-      <span className="text-sm text-right text-white font-medium">{displayValue}</span>
+      <span className="text-sm text-right text-brand-text font-medium">{displayValue}</span>
     </div>
   );
 };
@@ -149,8 +149,8 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ upnData, epcPayload, onRe
 
 
   return (
-    <div className="bg-brand-light-dark p-6 rounded-lg shadow-xl w-full max-w-md mx-auto flex flex-col items-center">
-      <h2 className="text-2xl font-bold text-white mb-2">{t('resultTitle')}</h2>
+    <div className="bg-white border border-brand-gray-light p-6 rounded-lg shadow-sm w-full max-w-md mx-auto flex flex-col items-center">
+      <h2 className="text-2xl font-bold text-brand-primary mb-2">{t('resultTitle')}</h2>
       <p className="text-brand-gray mb-6 text-center">{t('resultDescription')}</p>
       
       <div ref={qrCodeRef} className="bg-white p-4 rounded-lg mb-6">
@@ -162,9 +162,9 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ upnData, epcPayload, onRe
         />
       </div>
 
-      <div className="w-full mb-6 bg-brand-dark/50 p-4 rounded-lg border border-brand-gray/50">
-        <h3 className="text-lg font-semibold text-white mb-2">{t('howToPayTitle')}</h3>
-        <ol className="list-decimal list-inside space-y-1 text-gray-300 text-sm">
+      <div className="w-full mb-6 bg-brand-light-dark p-4 rounded-lg border border-brand-gray-light">
+        <h3 className="text-lg font-semibold text-brand-text mb-2">{t('howToPayTitle')}</h3>
+        <ol className="list-decimal list-inside space-y-1 text-brand-gray-dark text-sm">
             <li>{t('howToPayStep1')}</li>
             <li>{t('howToPayStep2')}</li>
             <li>{t('howToPayStep3')}</li>
@@ -172,7 +172,7 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ upnData, epcPayload, onRe
       </div>
 
       <div className="w-full mb-6">
-        <h3 className="text-lg font-semibold text-white mb-2 text-center border-b border-gray-700 pb-2">{t('originalDataTitle')}</h3>
+        <h3 className="text-lg font-semibold text-brand-text mb-2 text-center border-b border-brand-gray-light pb-2">{t('originalDataTitle')}</h3>
         <div className="mt-2">
           <DataRow label={t('recipient')} value={upnData.recipientName} />
           <DataRow label={t('iban')} value={upnData.recipientIBAN} />
@@ -186,14 +186,14 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ upnData, epcPayload, onRe
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <button
                 onClick={handleDownload}
-                className="w-full bg-brand-blue text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-brand-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-brand-primary-hover transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2"
                 >
                 <DownloadIcon className="w-5 h-5" />
                 {t('downloadImage')}
             </button>
             <button
                 onClick={handleShareImage}
-                className="w-full bg-brand-blue text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-white text-brand-primary font-semibold py-3 px-6 rounded-lg hover:bg-brand-light-dark transition-colors border-2 border-brand-primary shadow-sm hover:shadow-md flex items-center justify-center gap-2"
                 >
                 <Share2Icon className="w-5 h-5" />
                 {t('shareImage')}
@@ -201,14 +201,14 @@ const ResultDisplay: React.FC<ResultDisplayProps> = ({ upnData, epcPayload, onRe
         </div>
         <button
             onClick={handleCopyEpcPayload}
-            className="w-full bg-brand-blue text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-brand-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-brand-primary-hover transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2"
             >
             {isEpcCopied ? <CheckIcon className="w-5 h-5" /> : <CopyIcon className="w-5 h-5" />}
             {isEpcCopied ? t('epcPayloadCopied') : t('copyEpcPayload')}
         </button>
         <button
             onClick={onReset}
-            className="w-full bg-transparent text-brand-gray font-medium py-2 px-6 rounded-lg hover:bg-brand-light-dark/50 transition-colors flex items-center justify-center gap-2 border border-brand-gray"
+            className="w-full bg-white text-brand-gray font-medium py-2 px-6 rounded-lg hover:bg-brand-light-dark transition-colors flex items-center justify-center gap-2 border border-brand-gray-light"
             >
             <RefreshCwIcon className="w-5 h-5" />
             {t('scanAnother')}

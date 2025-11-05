@@ -112,8 +112,8 @@ const ImageCropModal: React.FC<ImageCropModalProps> = ({ imageSrc, onConfirm, on
 
   return (
     <div className="fixed inset-0 bg-black/80 flex flex-col items-center justify-center z-50 p-4">
-      <div className="bg-brand-light-dark rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 md:p-8 relative flex flex-col">
-        <h2 className="text-2xl font-bold text-white mb-4 text-center">{t('cropTitle')}</h2>
+      <div className="bg-white border border-brand-gray-light rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 md:p-8 relative flex flex-col">
+        <h2 className="text-2xl font-bold text-brand-primary mb-4 text-center border-b border-brand-primary/20 pb-3">{t('cropTitle')}</h2>
         <p className="text-brand-gray mb-6 text-center">{t('cropDescription')}</p>
         
         <div className="flex-grow flex items-center justify-center mb-6">
@@ -138,7 +138,7 @@ const ImageCropModal: React.FC<ImageCropModalProps> = ({ imageSrc, onConfirm, on
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
                 onClick={onCancel}
-                className="w-full sm:w-auto bg-brand-gray text-white font-bold py-3 px-8 rounded-lg hover:bg-gray-600 transition-colors flex items-center justify-center gap-2"
+                className="w-full sm:w-auto bg-white text-brand-gray font-semibold py-3 px-8 rounded-lg hover:bg-brand-light-dark transition-colors border-2 border-brand-gray-light flex items-center justify-center gap-2"
             >
                 <XIcon className="w-6 h-6" />
                 {t('cropCancel')}
@@ -146,7 +146,7 @@ const ImageCropModal: React.FC<ImageCropModalProps> = ({ imageSrc, onConfirm, on
             <button
                 onClick={handleConfirmCrop}
                 disabled={!completedCrop?.width || !completedCrop?.height}
-                className="w-full sm:w-auto bg-brand-blue text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto bg-brand-primary text-white font-semibold py-3 px-8 rounded-lg hover:bg-brand-primary-hover transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
                 <CheckIcon className="w-6 h-6" />
                 {t('cropConfirm')}

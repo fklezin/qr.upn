@@ -203,14 +203,14 @@ const App: React.FC = () => {
         return <SharedDisplay epcString={epcString} t={t} />;
       case 'error':
         return (
-          <div className="text-center text-red-400 bg-red-900/50 p-6 rounded-lg">
-            <h2 className="text-xl font-bold mb-2">{t('errorTitle')}</h2>
-            <p className="mb-4 whitespace-pre-wrap text-left bg-brand-dark/50 p-3 rounded-md font-mono text-sm">
+          <div className="text-center bg-white border border-brand-gray-light p-6 rounded-lg shadow-sm">
+            <h2 className="text-xl font-bold mb-2 text-brand-primary">{t('errorTitle')}</h2>
+            <p className="mb-4 whitespace-pre-wrap text-left bg-brand-light-dark p-3 rounded-md font-mono text-sm text-brand-gray-dark border border-brand-gray-light">
               {error}
             </p>
             <button
               onClick={handleReset}
-              className="bg-brand-blue text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-600 transition-colors"
+              className="bg-brand-primary text-white font-semibold py-2 px-6 rounded-lg hover:bg-brand-primary-hover transition-colors shadow-sm hover:shadow-md"
             >
               {t('errorTryAgain')}
             </button>
@@ -219,25 +219,25 @@ const App: React.FC = () => {
       case 'idle':
       default:
         return (
-          <div className="text-center p-8">
-            <div className="mx-auto mb-6 bg-brand-light-dark p-4 rounded-full w-24 h-24 flex items-center justify-center">
-              <QrCodeIcon className="w-12 h-12 text-brand-blue" />
+          <div className="text-center p-8 bg-white rounded-lg border border-brand-gray-light shadow-sm max-w-2xl mx-auto">
+            <div className="mx-auto mb-6 bg-white border-2 border-brand-primary p-4 rounded-full w-24 h-24 flex items-center justify-center shadow-sm">
+              <QrCodeIcon className="w-12 h-12 text-brand-primary" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">{t('title')}</h1>
+            <h1 className="text-3xl md:text-4xl font-bold text-brand-text mb-4">{t('title')}</h1>
             <p className="text-brand-gray max-w-md mx-auto mb-8">
               {t('description')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                <button
                   onClick={() => setStatus('scanning')}
-                  className="w-full sm:w-auto bg-brand-blue text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto bg-brand-primary text-white font-semibold py-3 px-8 rounded-lg text-lg hover:bg-brand-primary-hover transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2"
                 >
                   <CameraIcon className="w-6 h-6" />
                   {t('startScanning')}
                 </button>
                 <button
                   onClick={handleUploadClick}
-                  className="w-full sm:w-auto bg-brand-light-dark text-white font-bold py-3 px-8 rounded-lg text-lg hover:bg-gray-700 transition-colors flex items-center justify-center gap-2 border border-brand-gray"
+                  className="w-full sm:w-auto bg-white text-brand-primary font-semibold py-3 px-8 rounded-lg text-lg hover:bg-brand-light-dark transition-colors border-2 border-brand-primary shadow-sm hover:shadow-md flex items-center justify-center gap-2"
                 >
                   <UploadCloudIcon className="w-6 h-6" />
                   {t('uploadImage')}
@@ -264,34 +264,34 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-brand-dark text-gray-200 flex flex-col items-center justify-center p-4 relative">
-      <header className="absolute top-0 right-0 p-4 flex gap-3">
+    <div className="min-h-screen bg-brand-light-dark text-brand-text flex flex-col items-center justify-center p-4 relative">
+      <header className="absolute top-0 right-0 p-2 sm:p-4 flex gap-1 sm:gap-3 z-10">
         <button 
             onClick={handleLanguageChange}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg text-brand-gray hover:bg-brand-light-dark hover:text-white transition-colors"
-            title="Change language / Spremeni jezik"
+            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 rounded-full text-brand-gray hover:bg-white hover:text-brand-primary transition-colors border border-brand-gray-light hover:border-brand-primary"
+            title={`Change language / Spremeni jezik (${lang.toUpperCase()})`}
         >
-            <GlobeIcon className="w-6 h-6" />
-            <span className="font-bold text-sm">{lang.toUpperCase()}</span>
+            <GlobeIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+            <span className="font-bold text-xs sm:text-sm hidden sm:inline">{lang.toUpperCase()}</span>
         </button>
         <button 
             onClick={handleViewBlog}
-            className="p-2 rounded-full text-brand-gray hover:bg-brand-light-dark hover:text-white transition-colors"
+            className="p-2 rounded-full text-brand-gray hover:bg-white hover:text-brand-primary transition-colors border border-brand-gray-light hover:border-brand-primary"
             title={t('blogButtonTitle')}
         >
-            <FileTextIcon className="w-6 h-6" />
+            <FileTextIcon className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
         <button 
             onClick={() => setInfoModalOpen(true)}
-            className="p-2 rounded-full text-brand-gray hover:bg-brand-light-dark hover:text-white transition-colors"
+            className="p-2 rounded-full text-brand-gray hover:bg-white hover:text-brand-primary transition-colors border border-brand-gray-light hover:border-brand-primary"
             title="About this app / O aplikaciji"
         >
-            <InfoIcon className="w-6 h-6" />
+            <InfoIcon className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
       </header>
 
       <div id={fileScannerElementId} style={{ display: 'none' }}></div>
-      <main className="w-full max-w-2xl mx-auto">
+      <main className="w-full max-w-2xl mx-auto mt-12 sm:mt-0">
         {renderContent()}
       </main>
       {isCropping && imageSrcForCrop && (
@@ -302,9 +302,6 @@ const App: React.FC = () => {
             t={t}
           />
       )}
-      <footer className="text-center text-brand-gray text-sm p-4 mt-auto">
-        <p>&copy; {new Date().getFullYear()} {t('footerText')}</p>
-      </footer>
       {isInfoModalOpen && <InfoModal onClose={() => setInfoModalOpen(false)} t={t} />}
     </div>
   );

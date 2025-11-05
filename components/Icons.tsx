@@ -113,3 +113,22 @@ export const FileTextIcon: React.FC<IconProps> = (props) => (
     <line x1="10" y1="9" x2="8" y2="9" />
   </svg>
 );
+
+export const FlashlightIcon: React.FC<IconProps> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1Z" />
+    <path d="M12 6v3" />
+    <path d="M15 9h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h2" />
+    <path d="M9 18h6" />
+  </svg>
+);
+
+export const FlashlightOffIcon: React.FC<IconProps> = (props) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M15 2H9a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1Z" />
+    <path d="M12 6v3" />
+    <path d="M15 9h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1h2" />
+    <path d="M9 18h6" />
+    <line x1="2" y1="2" x2="22" y2="22" />
+  </svg>
+);
