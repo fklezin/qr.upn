@@ -1,28 +1,60 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# UPN to EPC QR Converter
 
-# Run and deploy your AI Studio app
+A web application that converts Slovenian UPN (Universal Payment Order) QR codes into European EPC (European Payments Council) QR codes, enabling payment through modern European banking apps like Revolut, N26, and others that don't natively support the UPN format.
 
-This contains everything you need to run your app locally.
+🌐 **Live App:** [https://fklezin.github.io/qr.upn/](https://fklezin.github.io/qr.upn/)
 
-View your app in AI Studio: https://ai.studio/apps/drive/1d7-Lij_Dt02fpi_Uh7MdQhEBAb-Da4yL
+## Features
+
+- **Scan QR codes** using your device's camera with flashlight support
+- **Upload images** with QR codes and crop them for better recognition
+- **Instant conversion** from UPN to EPC format
+- **Multi-language support** (English and Slovenian)
+- **Mobile-friendly** interface optimized for smartphones
+- **Share converted QR codes** with a simple URL
+
+## Why This Tool?
+
+Slovenian bills use the local UPN QR format, while modern European neobanks only support the international EPC standard. This tool bridges the gap, allowing you to pay Slovenian bills fee-free using apps like Revolut and N26.
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
-
+**Prerequisites:** Node.js
 
 1. Install dependencies:
-   `npm install`
-2. Run the app:
-   `npm run dev`
+   ```bash
+   npm install
+   ```
 
-## Deploy for Free (Mobile Testing)
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-### GitHub Pages
+3. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-1. Install gh-pages: `npm install --save-dev gh-pages`
-2. Add to `package.json` scripts: `"deploy": "npm run build && gh-pages -d dist"`
-3. Run: `npm run deploy`
-4. Enable GitHub Pages in your repo settings
+## Deploy to GitHub Pages
+
+The project is already configured for GitHub Pages deployment:
+
+```bash
+npm run deploy
+```
+
+Then enable GitHub Pages in your repository settings (Settings → Pages → Source: `gh-pages` branch).
+
+## Tech Stack
+
+- React + TypeScript
+- Vite
+- Tailwind CSS
+- jsQR for QR code scanning
+- qrcode for QR code generation
+
+## Built With
+
+This project was vibecoded using [Google AI Studio](https://aistudio.google.com/) and [Cursor](https://cursor.sh/).
+
+## License
+
+MIT
